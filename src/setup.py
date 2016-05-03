@@ -6,7 +6,7 @@ import shutil
 
 def get_git_version(version):
     try:
-        cmd = "git describe --tags"
+        cmd = "git describe --tags --dirty"
         git_version = subprocess.check_output(shlex.split(cmd))
         git_version = git_version.strip()
 
@@ -30,7 +30,7 @@ def get_git_version(version):
 
 def get_version():
 
-    version = "0.0"
+    version = "0.0-dirty"
     version = get_git_version(version)  # --REMOVE-THIS-LINE
 
     return version
@@ -39,7 +39,5 @@ setup(
     name="tdev",
     version=get_version(),
     packages=find_packages(),
-    entry_points={
-        'console_scripts': [ ]
-    }
+    scripts=['bin/tdev']
 )
