@@ -30,7 +30,7 @@ def get_git_version(version):
 
 def get_version():
 
-    version = "0.0-dirty"
+    version = "0.0-1-gcf51358-dirty"
     version = get_git_version(version)  # --REMOVE-THIS-LINE
 
     return version

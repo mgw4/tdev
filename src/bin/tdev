@@ -39,7 +39,7 @@ import shutil
 
 def get_git_version(version):
     try:
-        cmd = "git describe --tags"
+        cmd = "git describe --tags --dirty=-uncommited"
         git_version = subprocess.check_output(shlex.split(cmd))
         git_version = git_version.strip()
 
@@ -80,9 +80,10 @@ EndOfSetup
 
     echo "initializing git repository and setting version tag to 0.0"
     cd $projdir
+    cp $HOME/github/gitignore/Python.gitignore $projdir/.gitignore
     git init
-    git add src
-    git commit -m "commit of skeleton"
+    git add src .gitignore
+    git commit -m "initial commit of skeleton"
     git tag 0.0
 
 cd $projdir
@@ -92,5 +93,5 @@ fi
 cd $projdir
 
 tmux new-session -d "source $HOME/.virtualenvs/$projname/bin/activate; vim "
-tmux split-window -v -p 30 "source $HOME/.virtualenvs/$projname/bin/activate; /bin/bash"
+tmux split-window -v -p 30 "source $HOME/.virtualenvs/$projname/bin/activate; $SHELL"
 tmux -2 attach-session -d
