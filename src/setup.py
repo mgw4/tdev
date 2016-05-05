@@ -1,37 +1,67 @@
-from setuptools import setup, find_packages
 import subprocess
 import shlex
-import shutil
+import sys
+
+from setuptools import setup, find_packages
 
 
-def get_git_version(version):
+class SetupException(Exception):
+    pass
+
+
+def set_git_version():
     try:
         cmd = "git describe --tags --dirty"
+        cmd1 = "git rev-parse HEAD"
         git_version = subprocess.check_output(shlex.split(cmd))
-        git_version = git_version.strip()
+        if git_version.find('dirty') != -1 and '--force' not in sys.argv:
+            raise SetupException("Git repository is in a dirty state. "
+                                 "Not all changes have been commited. "
+                                 "Use --force option to force the creation "
+                                 "of the package")
 
-        if git_version != version:
-            with open(__file__, 'r') as fp:
-                with open(__file__ + ".tmp", 'w') as fpw:
-                    for line in fp.readlines():
-                        print line
-                        if line.startswith("    version = \""):
-                            line = "    version = \"{}\"\n".format(git_version)
-                        fpw.write(line)
+        if '--force' in sys.argv:
+            sys.argv.remove('--force')
+            cmd = "git describe --tags "
+            cmd1 = "git rev-parse HEAD"
+            git_version = subprocess.check_output(shlex.split(cmd))
 
-            shutil.move(__file__ + ".tmp", __file__)
+        git_hash = subprocess.check_output(shlex.split(cmd1))
 
-            version = git_version
+        with open('VERSION', 'w') as fp:
+            fp.write(git_version)
+            fp.write(git_hash)
+
+    except SetupException:
+        raise
+
     except:
         pass
 
-    return version
+
+def parse_version(git_version):
+    split_version = git_version.split('-')
+    try:
+
+        (major, minor) = split_version[0].split('.')
+
+        if len(split_version) == 3:
+            micro = split_version[1]
+        else:
+            micro = 0
+
+        return ".".join([major, minor, micro])
+    except ValueError:
+        raise SetupException("The git tag must be set to a <number>.<number>. "
+                             "Currently set to {}".format(split_version[0]))
 
 
 def get_version():
 
-    version = "0.0-1-gcf51358-dirty"
-    version = get_git_version(version)  # --REMOVE-THIS-LINE
+    set_git_version()
+    with open('VERSION', 'r') as fp:
+        version = fp.readline().strip()
+    version = parse_version(version)
 
     return version
 
@@ -39,5 +69,6 @@ setup(
     name="tdev",
     version=get_version(),
     packages=find_packages(),
-    scripts=['bin/tdev']
+    scripts=['bin/tdev'],
+    include_package_data=True,
 )
