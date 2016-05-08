@@ -19,6 +19,9 @@ then
     sleep 2
     source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
     mkvirtualenv -i ipython -i ipdb -i jedi $projname
+    pip install ipython
+    pip install ipdb 
+    pip install jedi
 fi
 
 
@@ -28,66 +31,17 @@ then
     echo "creating one right now ..."
     sleep 2
     mkdir -p -v $projdir/src/
-    echo "creating stupp setup.py file"
+    echo "creating stup setup.py file"
     echo "can you ask for better..."
-    cat > $projdir/src/setup.py <<- EndOfSetup
-from setuptools import setup, find_packages
-import subprocess
-import shlex
-import shutil
-
-
-def get_git_version(version):
-    try:
-        cmd = "git describe --tags --dirty=-uncommited"
-        git_version = subprocess.check_output(shlex.split(cmd))
-        git_version = git_version.strip()
-
-        if git_version != version:
-            with open(__file__, 'r') as fp:
-                with open(__file__ + ".tmp", 'w') as fpw:
-                    for line in fp.readlines():
-                        print line
-                        if line.startswith("    version = \""):
-                            line = "    version = \"{}\"\n".format(git_version)
-                        fpw.write(line)
-
-            shutil.move(__file__ + ".tmp", __file__)
-
-            version = git_version
-    except:
-        pass
-
-    return version
-
-
-def get_version():
-
-    version = "0.0"
-    version = get_git_version(version)  # --REMOVE-THIS-LINE
-
-    return version
-
-setup(
-    name="$projname",
-    version=get_version(),
-    packages=find_packages(),
-    entry_points={
-        'console_scripts': [ ]
-    }
-)
-EndOfSetup
+    mksetup $projname $projdir/
 
     echo "initializing git repository and setting version tag to 0.0"
     cd $projdir
-    cp $HOME/github/gitignore/Python.gitignore $projdir/.gitignore
     git init
-    git add src .gitignore
+    git add src/setup.py src/MANIFEST.in .gitignore
     git commit -m "initial commit of skeleton"
     git tag 0.0
 
-cd $projdir
-git init 
 fi
 
 cd $projdir
