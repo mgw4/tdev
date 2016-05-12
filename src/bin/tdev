@@ -46,6 +46,13 @@ fi
 
 cd $projdir
 
-tmux new-session -d "source $HOME/.virtualenvs/$projname/bin/activate; vim "
-tmux split-window -v -p 30 "source $HOME/.virtualenvs/$projname/bin/activate; $SHELL"
-tmux -2 attach-session -d
+
+if tmux a -t $projname
+then
+    echo "Found active session and attached"
+else
+    echo "Could not attach to session"
+    tmux new-session -s $projname -d "source $HOME/.virtualenvs/$projname/bin/activate; vim "
+    tmux split-window -t $projname -v -p 30 "source $HOME/.virtualenvs/$projname/bin/activate; $SHELL"
+    tmux -2 attach-session -d -t $projname
+fi
