@@ -12,20 +12,28 @@ class SetupException(Exception):
 
 
 def git_unstash():
-
     global git_stashed
+
     if git_stashed:
 
         cmd_git_unstash = "git stash pop"
         subprocess.check_call(cmd_git_unstash)
+
+        print "###############################"
+        print "# Restored uncomitted changes"
+        print "###############################"
 
 
 def git_stash():
     global git_stashed
 
     cmd_git_stash = "git stash"
-    print ("Git repo is dirty will stash un-commited changes and "
+    print ("#####################################################"
+           "##########################################")
+    print ("# Git repo is dirty will stash un-commited changes and "
            "restore them once the package is created")
+    print ("#####################################################"
+           "##########################################")
     subprocess.check_call(cmd_git_stash)
 
     git_stashed = True
