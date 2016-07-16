@@ -4,8 +4,6 @@ import subprocess
 
 from setuptools import setup, find_packages
 
-git_stashed = False
-
 
 class SetupException(Exception):
     pass
