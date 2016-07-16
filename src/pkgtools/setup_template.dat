@@ -80,8 +80,7 @@ def main():
         ],
         scripts=['bin/tdev'],
         entry_points={
-            'console_scripts': ['mkpkg=pkgtools.mkpkg:main',
-                                'mksetup=pkgtools.mksetup:main']
+            'console_scripts': []
         },
         include_package_data=True,
     )
