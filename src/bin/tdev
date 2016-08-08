@@ -44,7 +44,7 @@ build_env(){
     python=`which python$v`
 
     echo "Project does not have a virtual environement"
-    echo "Creating one right now ..."
+    echo "creating one right now ..."
     sleep 2
     mkvirtualenv -p $python $projname
     pip install --upgrade pip
@@ -73,7 +73,7 @@ build_wdir(){
     echo "can you ask for better..."
     mksetup $projname $projdir/
 
-    echo "initializing git repository and setting version tag to 0.0"
+    echo "Initializing git repository and setting version tag to 0.0"
     cd $projdir
     git init
     git add src/setup.py src/MANIFEST.in .gitignore
@@ -82,6 +82,7 @@ build_wdir(){
 }
 
 connect_env(){
+    cd $projdir
     if tmux a -t $projname
     then
         echo "Found active session and attached"
@@ -122,6 +123,7 @@ then
 fi
 
 cd $projdir
+echo $projdir
 connect_env
 
 
