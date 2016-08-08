@@ -2,7 +2,7 @@
 
 if [ -z $1 ]
 then
-    echo "Usage: $0 <project name> [-p2|-p3|-d|] <aditional pip to install ...>"
+    echo "Usage: $0 <project name> [-p2|-p3|-d|-dv|-rv] <aditional pip to install ...>"
     exit 2
 fi
 
@@ -12,12 +12,19 @@ venvdir="$HOME/.virtualenvs/$projname/"
 venvsource="$venvdir/bin/activate"
 projdir=$HOME/devel/$projname
 
+
+source `which virtualenvwrapper.sh`
+
+del_venv(){
+    rm -rf $venvdir
+    echo "Done deleting virtual environement"
+}
+
 del_env(){
     tmux kill-session -t $projname
-    rm -rf $venvdir
+    del_venv
     rm -rf $projdir
     echo "Done deleting environement"
-    exit
 }
 
 build_env(){
@@ -39,7 +46,6 @@ build_env(){
     echo "Project does not have a virtual environement"
     echo "Creating one right now ..."
     sleep 2
-    source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
     mkvirtualenv -p $python $projname
     pip install --upgrade pip
 
@@ -90,6 +96,18 @@ connect_env(){
 if [ "$2" == "-d" ]
 then
     del_env
+    exit
+fi
+
+if [ "$2" == "-dv" ]
+then
+    del_venv
+    exit
+fi
+
+if [ "$2" == "-rv" ]
+then
+    del_venv
 fi
 
 if [ ! -f $venvsource ]
