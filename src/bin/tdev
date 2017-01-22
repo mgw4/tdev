@@ -13,7 +13,8 @@ venvsource="$venvdir/bin/activate"
 projdir=$HOME/devel/$projname
 
 
-source `which virtualenvwrapper.sh`
+echo sourcing $VENVWRAP
+source $VENVWRAP
 
 del_venv(){
     rm -rf $venvdir
@@ -29,6 +30,7 @@ del_env(){
 
 build_env(){
     off=1
+    v=3
 
     if [ "$2" == "-p3" ]; then
         v=3
@@ -49,7 +51,7 @@ build_env(){
     mkvirtualenv -p $python $projname
     pip install --upgrade pip
 
-    pkglist=(ipython ipdb jedi flake8 autopep8)
+    pkglist=(ipython ipdb jedi flake8 autopep8 virtualenvwrapper)
     echo Installing base packages ${pkglist[@]}
     for pkg in ${pkglist[@]}
     do

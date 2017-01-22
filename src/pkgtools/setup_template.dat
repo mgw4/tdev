@@ -74,7 +74,7 @@ def main():
         name="projname",
         version=get_version(),
         packages=find_packages(),
-        requires=[],
+        install_requires=[],
         scripts=[],
         entry_points={
             'console_scripts': []
@@ -85,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

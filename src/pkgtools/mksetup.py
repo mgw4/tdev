@@ -1,13 +1,22 @@
 import argparse
 import os
 import re
+import shutil
 
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def make_setup(project_name, src_path):
-    with open(os.path.join(src_path, 'setup.py'), 'w') as fp:
+    setup_path = os.path.join(src_path, 'setup.py')
+    if os.path.exists(setup_path):
+        try:
+            setup_bak = "{}.bak".format(setup_path)
+            shutil.copy(setup_path, setup_bak)
+            print("copied the old setup to {}".format(setup_bak))
+        except:
+            pass
+    with open(setup_path, 'w') as fp:
         with open(os.path.join(_ROOT, 'setup_template.dat'), 'r') as fpr:
             tmpl = fpr.read()
             tmpl = re.sub('projname', project_name, tmpl)
@@ -26,7 +35,7 @@ def make_gitignore(project_path):
 
 
 def main():
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(description="create a default setup for the project")
     p.add_argument("project_name", help="name of the project")
     p.add_argument("project_path", help="path of the project")
 
