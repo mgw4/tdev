@@ -48,7 +48,6 @@ def parse_version(git_version):
     except:
         rev['micro'] = 0
 
-    print rev
     ver = [str(rev['major']), str(rev['minor']), str(rev['micro'])]
     if rev['dirty'] is not None or rev['dirty1'] is not None:
         ver.append('dirty')
