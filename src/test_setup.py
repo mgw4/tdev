@@ -16,7 +16,7 @@ class TestParseVersion(unittest.TestCase):
         version['1.2.3-dirty'] = '1.2.3.dirty'
         version['1.2-3-gd5f2eac'] = '1.2.3'
         version['1.2-3-gd5f2eac-dirty'] = '1.2.3.dirty'
-        for k, v in version.iteritems():
+        for k, v in version.items():
             version = parse_version(k)
             self.assertEqual(v, version, "version does not match")
 
