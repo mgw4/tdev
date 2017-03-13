@@ -5,7 +5,6 @@ from setup import parse_version, SetupException
 
 class TestParseVersion(unittest.TestCase):
 
-
     def test_parseversion(self):
         version = {}
         version['1.0.0'] = '1.0.0'
@@ -18,7 +17,7 @@ class TestParseVersion(unittest.TestCase):
         version['1.2-3-gd5f2eac'] = '1.2.3'
         version['1.2-3-gd5f2eac-dirty'] = '1.2.3.dirty'
         for k, v in version.iteritems():
-            print k, v
+            print(k, v)
             version = parse_version(k)
             print version
             self.assertEqual(v, version, "version does not match")
