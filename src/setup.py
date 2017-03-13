@@ -1,11 +1,8 @@
+import re
 import shlex
 import subprocess
-# import sys
-import re
 
 from setuptools import setup, find_packages
-
-git_stashed = False
 
 
 class SetupException(Exception):
@@ -18,8 +15,10 @@ def set_git_version():
         cmd_git_hash = "git rev-parse HEAD"
 
         git_version = subprocess.check_output(shlex.split(cmd_git_version))
+        git_version = git_version.decode('utf-8').strip()
         ver = parse_version(git_version)
         git_hash = subprocess.check_output(shlex.split(cmd_git_hash))
+        git_hash = git_hash.decode('utf-8').strip()
 
         with open('VERSION', 'w') as fp:
             fp.write(ver + "\n")
@@ -48,7 +47,7 @@ def parse_version(git_version):
     except:
         rev['micro'] = 0
 
-    print rev
+    print(rev)
     ver = [str(rev['major']), str(rev['minor']), str(rev['micro'])]
     if rev['dirty'] is not None or rev['dirty1'] is not None:
         ver.append('dirty')
@@ -80,11 +79,10 @@ def main():
         name="tdev",
         version=get_version(),
         packages=find_packages(),
-        requires=get_requires(),
-        scripts=['bin/tdev'],
+        install_requires=get_requires(),
+        scripts=[],
         entry_points={
-            'console_scripts': ['mkpkg=pkgtools.mkpkg:main',
-                                'mksetup=pkgtools.mksetup:main']
+            'console_scripts': []
         },
         include_package_data=True,
     )
