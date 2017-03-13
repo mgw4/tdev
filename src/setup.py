@@ -23,20 +23,22 @@ def set_git_version():
 
         with open('VERSION', 'w') as fp:
             fp.write(ver + "\n")
-            fp.write(git_version)
-            fp.write(git_hash)
+            fp.write(git_version.decode('utf-8').strip())
+            fp.write(git_hash.decode('utf-8').strip())
 
     except SetupException:
         raise
 
-    except:
-        pass
+    # except Exception as e:
+    #     print(e)
+    #     pass
 
 
 def parse_version(git_version):
     rem = re.match("^(?P<major>\d+)\.(?P<minor>\d+)"
                    "(?:$|[-.](?:(?P<micro>\d+)|(?P<dirty>dirty)$)"
-                   "(?:.*?)(?:$|-(?P<dirty1>dirty)$))", git_version)
+                   "(?:.*?)(?:$|-(?P<dirty1>dirty)$))",
+                   git_version.decode('utf-8'))
     if not rem:
         raise SetupException("The git tag must be set to a <number>.<number>. "
                              "Currently set to {}".format(git_version))
