@@ -1,2 +1,2 @@
-include VERSION
+include VERSION requirements.txt
 include pkgtools/*.dat

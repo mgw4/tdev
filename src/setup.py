@@ -69,16 +69,18 @@ def get_version():
     return version
 
 
+def get_requires():
+    with open('requirements.txt', 'r') as fp:
+        return fp.readlines()
+
+
 def main():
 
     setup(
         name="tdev",
         version=get_version(),
         packages=find_packages(),
-        requires=[
-            'pip',
-            'virtualenvwraper'
-        ],
+        requires=get_requires(),
         scripts=['bin/tdev'],
         entry_points={
             'console_scripts': ['mkpkg=pkgtools.mkpkg:main',
