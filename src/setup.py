@@ -1,11 +1,8 @@
+import re
 import shlex
 import subprocess
-# import sys
-import re
 
 from setuptools import setup, find_packages
-
-git_stashed = False
 
 
 class SetupException(Exception):
@@ -18,27 +15,27 @@ def set_git_version():
         cmd_git_hash = "git rev-parse HEAD"
 
         git_version = subprocess.check_output(shlex.split(cmd_git_version))
+        git_version = git_version.decode('utf-8').strip()
         ver = parse_version(git_version)
         git_hash = subprocess.check_output(shlex.split(cmd_git_hash))
+        git_hash = git_hash.decode('utf-8').strip()
 
         with open('VERSION', 'w') as fp:
             fp.write(ver + "\n")
-            fp.write(git_version.decode('utf-8').strip())
-            fp.write(git_hash.decode('utf-8').strip())
+            fp.write(git_version)
+            fp.write(git_hash)
 
     except SetupException:
         raise
 
-    # except Exception as e:
-    #     print(e)
-    #     pass
+    except:
+        pass
 
 
 def parse_version(git_version):
     rem = re.match("^(?P<major>\d+)\.(?P<minor>\d+)"
                    "(?:$|[-.](?:(?P<micro>\d+)|(?P<dirty>dirty)$)"
-                   "(?:.*?)(?:$|-(?P<dirty1>dirty)$))",
-                   git_version.decode('utf-8'))
+                   "(?:.*?)(?:$|-(?P<dirty1>dirty)$))", git_version)
     if not rem:
         raise SetupException("The git tag must be set to a <number>.<number>. "
                              "Currently set to {}".format(git_version))
@@ -50,6 +47,7 @@ def parse_version(git_version):
     except:
         rev['micro'] = 0
 
+    print(rev)
     ver = [str(rev['major']), str(rev['minor']), str(rev['micro'])]
     if rev['dirty'] is not None or rev['dirty1'] is not None:
         ver.append('dirty')
@@ -81,11 +79,10 @@ def main():
         name="tdev",
         version=get_version(),
         packages=find_packages(),
-        requires=get_requires(),
-        scripts=['bin/tdev'],
+        install_requires=get_requires(),
+        scripts=[],
         entry_points={
-            'console_scripts': ['mkpkg=pkgtools.mkpkg:main',
-                                'mksetup=pkgtools.mksetup:main']
+            'console_scripts': []
         },
         include_package_data=True,
     )
