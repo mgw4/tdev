@@ -25,7 +25,7 @@ def make_setup(project_name, src_path):
 
 def make_manifest(src_path):
     with open(os.path.join(src_path, "MANIFEST.in"), 'w') as fp:
-        fp.write("include VERSION")
+        fp.write("include VERSION requirements.txt")
 
 
 def make_gitignore(project_path):
@@ -34,8 +34,14 @@ def make_gitignore(project_path):
             fpw.write(fp.read())
 
 
+def make_requirements(project_path):
+    with open(os.path.join(project_path, 'requirements.txt'), 'w') as fp:
+        fp.write('')
+
+
 def main():
-    p = argparse.ArgumentParser(description="create a default setup for the project")
+    p = argparse.ArgumentParser(
+        description="create a default setup for the project")
     p.add_argument("project_name", help="name of the project")
     p.add_argument("project_path", help="path of the project")
 
@@ -51,6 +57,7 @@ def main():
 
     make_setup(args.project_name, src_path)
     make_manifest(src_path)
+    make_requirements(src_path)
     make_gitignore(args.project_path)
 
 
