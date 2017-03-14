@@ -55,6 +55,11 @@ def parse_version(git_version):
     return ".".join(ver)
 
 
+def get_requirements():
+    with open('requirements.txt', 'r') as fp:
+        return fp.readlines()
+
+
 def get_version():
 
     set_git_version()
@@ -74,7 +79,7 @@ def main():
         name="projname",
         version=get_version(),
         packages=find_packages(),
-        install_requires=[],
+        install_requires=get_requirements(),
         scripts=[],
         entry_points={
             'console_scripts': []

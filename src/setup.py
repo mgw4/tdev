@@ -82,7 +82,8 @@ def main():
         install_requires=get_requires(),
         scripts=[],
         entry_points={
-            'console_scripts': []
+            'console_scripts': ['mkpkg=pkgtools.mkpkg:main',
+                                'mksetup=pkgtools.mksetup:main']
         },
         include_package_data=True,
     )
