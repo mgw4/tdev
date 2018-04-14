@@ -5,7 +5,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
-def mkpkg(pkgar, base_path="./", version=None):
+def _mkpkg(pkgar, base_path="./", version=None):
     assert isinstance(pkgar, list)
 
     tmp_dir = os.getcwd()
@@ -37,6 +37,15 @@ def mkpkg(pkgar, base_path="./", version=None):
         os.chdir(tmp_dir)
 
 
+def make_package(package_name, base_path="./", version=None):
+    path_list = []
+
+    for i in package_name.split("."):
+        if len(i) != 0:
+            path_list.append(i)
+            _mkpkg(path_list, base_path, version)
+
+
 def main():
 
     p = argparse.ArgumentParser()
@@ -48,13 +57,7 @@ def main():
                    default=None)
 
     args = p.parse_args()
-
-    path_list = []
-
-    for i in args.package_name.split("."):
-        if len(i) != 0:
-            path_list.append(i)
-            mkpkg(path_list, args.base_path, args.version)
+    make_package(args.package_name, args.base_path, args.version)
 
 
 if __name__ == "__main__":
