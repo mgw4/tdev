@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 
+from pkgtools.mkpkg import make_package
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,7 +15,7 @@ def make_setup(project_name, src_path):
             setup_bak = "{}.bak".format(setup_path)
             shutil.copy(setup_path, setup_bak)
             print("copied the old setup to {}".format(setup_bak))
-        except:
+        except Exception:
             pass
     with open(setup_path, 'w') as fp:
         with open(os.path.join(_ROOT, 'setup_template.dat'), 'r') as fpr:
@@ -39,11 +40,24 @@ def make_requirements(project_path):
         fp.write('')
 
 
+def make_readme(project_path, project_name):
+
+    with open(os.path.join(project_path, "README.rst"), "w") as fp:
+        fp.write("="*len(project_name))
+        fp.write(project_name)
+        fp.write("="*len(project_name))
+        fp.write("")
+        fp.write("Introduction")
+        fp.write("------------")
+
+
 def main():
     p = argparse.ArgumentParser(
         description="create a default setup for the project")
     p.add_argument("project_name", help="name of the project")
     p.add_argument("project_path", help="path of the project")
+    p.add_argument("-version", help="the initial version of the project",
+                   default="0.0.0")
 
     args = p.parse_args()
 
@@ -59,6 +73,9 @@ def main():
     make_manifest(src_path)
     make_requirements(src_path)
     make_gitignore(args.project_path)
+
+    make_readme(args.project_path, args.project_name)
+    make_package(args.project_name, src_path, args.version)
 
 
 if __name__ == "__main__":
