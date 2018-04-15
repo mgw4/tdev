@@ -11,12 +11,10 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 def make_setup(project_name, src_path):
     setup_path = os.path.join(src_path, 'setup.py')
     if os.path.exists(setup_path):
-        try:
-            setup_bak = "{}.bak".format(setup_path)
-            shutil.copy(setup_path, setup_bak)
-            print("copied the old setup to {}".format(setup_bak))
-        except Exception:
-            pass
+        setup_bak = "{}.bak".format(setup_path)
+        shutil.copy(setup_path, setup_bak)
+        print("copied the old setup to {}".format(setup_bak))
+
     with open(setup_path, 'w') as fp:
         with open(os.path.join(_ROOT, 'setup_template.dat'), 'r') as fpr:
             tmpl = fpr.read()
@@ -51,7 +49,7 @@ def make_readme(project_path, project_name):
         fp.write("------------")
 
 
-def main():
+def main():  # pragma: nocover
     p = argparse.ArgumentParser(
         description="create a default setup for the project")
     p.add_argument("project_name", help="name of the project")
@@ -78,5 +76,5 @@ def main():
     make_package(args.project_name, src_path, args.version)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":  # pargma: nocover
+    main()  # pragma: nocover
