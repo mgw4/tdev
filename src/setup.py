@@ -39,7 +39,7 @@ def main():
         scripts=[],
         entry_points={
             'console_scripts': ['pt.mkpkg=pkgtools.mkpkg:main',
-                                'pt.mksetup=pkgtools.mksetup:main',
+                                'pt.mkskel=pkgtools.mkskel:main',
                                 "pt.upversion=pkgtools.mkpkg:main_update"]
         },
         include_package_data=True,
