@@ -1,9 +1,7 @@
-import argparse
 import os
 import re
 import shutil
 
-from pkgtools.mkpkg import make_package
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -47,34 +45,3 @@ def make_readme(project_path, project_name):
         fp.write("")
         fp.write("Introduction")
         fp.write("------------")
-
-
-def main():  # pragma: nocover
-    p = argparse.ArgumentParser(
-        description="create a default setup for the project")
-    p.add_argument("project_name", help="name of the project")
-    p.add_argument("project_path", help="path of the project")
-    p.add_argument("-version", help="the initial version of the project",
-                   default="0.0.0")
-
-    args = p.parse_args()
-
-    src_path = os.path.join(args.project_path, 'src')
-
-    try:
-        os.makedirs(src_path)
-    except OSError as e:
-        if e.errno != 17:
-            raise
-
-    make_setup(args.project_name, src_path)
-    make_manifest(src_path)
-    make_requirements(src_path)
-    make_gitignore(args.project_path)
-
-    make_readme(args.project_path, args.project_name)
-    make_package(args.project_name, src_path, args.version)
-
-
-if __name__ == "__main__":  # pargma: nocover
-    main()  # pragma: nocover
