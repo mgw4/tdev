@@ -14,7 +14,7 @@ def _mkpkg(pkgar, base_path="./", version=None):
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         elif not os.path.isdir(base_path):
-            raise ("{} not a directory".format(base_path))
+            raise Exception("{} not a directory".format(base_path))
 
         os.chdir(base_path)
 
@@ -23,6 +23,8 @@ def _mkpkg(pkgar, base_path="./", version=None):
         if not os.path.exists(pkg):
             os.mkdir(pkg)
         else:
+            if not os.path.isdir(pkg):
+                raise Exception("package path {} is not a directoy".format(pkg))
             logger.info("path already exists")
 
         init_file = os.path.join(pkg, "__init__.py")
@@ -68,7 +70,7 @@ def update_version(package_name, version, base_path="./"):
         fp.write(new_init)
 
 
-def main_update():
+def main_update():  # pragma: nocover
     p = argparse.ArgumentParser()
     p.add_argument("package_name", help="package name ie: pkgtools.test")
     p.add_argument("version", help="version number for the package",
@@ -81,7 +83,7 @@ def main_update():
     update_version(args.package_name, args.version, args.base_path)
 
 
-def main():
+def main():  # pragma: nocover
 
     p = argparse.ArgumentParser()
     p.add_argument("package_name", help="package name ie: pkgtools.test")
@@ -95,5 +97,5 @@ def main():
     make_package(args.package_name, args.base_path, args.version)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":  # pargma: nocover
+    main()  # pragma: nocover
