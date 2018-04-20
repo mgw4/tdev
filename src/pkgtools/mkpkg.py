@@ -2,6 +2,8 @@ import argparse
 import logging
 import os
 import re
+import shlex
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,8 @@ def _mkpkg(pkgar, base_path="./", version=None):
             os.mkdir(pkg)
         else:
             if not os.path.isdir(pkg):
-                raise Exception("package path {} is not a directoy".format(pkg))
+                raise Exception(
+                    "package path {} is not a directoy".format(pkg))
             logger.info("path already exists")
 
         init_file = os.path.join(pkg, "__init__.py")
@@ -49,7 +52,7 @@ def make_package(package_name, base_path="./", version=None):
             _mkpkg(path_list, base_path, version)
 
 
-def update_version(package_name, version, base_path="./"):
+def update_version(package_name, version, base_path="./", git_tag=False):
 
     pkg_list = package_name.split(".")
     init_file = os.path.join(base_path, *pkg_list, "__init__.py")
@@ -69,6 +72,20 @@ def update_version(package_name, version, base_path="./"):
     with open(init_file, 'w') as fp:
         fp.write(new_init)
 
+    if git_tag:
+        cmd = "git -C {base_path} add {init_file}".format(base_path=base_path,
+                                                          init_file=init_file)
+        subprocess.check_output(shlex.split(cmd))
+        cmd = ("git -C {base_path} commit "
+               "-m 'Bumps version to {version}'").format(
+            base_path=base_path,
+            version=version
+        )
+        subprocess.check_output(shlex.split(cmd))
+        cmd = "git -C {base_path} tag {version}".format(base_path=base_path,
+                                                        version=version)
+        subprocess.check_output(shlex.split(cmd))
+
 
 def main_update():  # pragma: nocover
     p = argparse.ArgumentParser()
@@ -78,9 +95,12 @@ def main_update():  # pragma: nocover
     p.add_argument("-base_path",
                    help="folder in which to create the package",
                    default="./")
+    p.add_argument("-git_tag", help="will tag the version in git",
+                   action='store_false', default=True)
     args = p.parse_args()
 
-    update_version(args.package_name, args.version, args.base_path)
+    update_version(args.package_name, args.version,
+                   args.base_path, args.git_tag)
 
 
 def main():  # pragma: nocover
@@ -91,7 +111,7 @@ def main():  # pragma: nocover
                    help="folder in which to create the package",
                    default="./")
     p.add_argument("-version", help="version number for the package",
-                   default=None)
+                   default="0.0.0")
 
     args = p.parse_args()
     make_package(args.package_name, args.base_path, args.version)
