@@ -40,8 +40,14 @@ def make_readme(project_path, project_name):
 
     with open(os.path.join(project_path, "README.rst"), "w") as fp:
         fp.write("="*len(project_name))
+        fp.write("\n")
         fp.write(project_name)
+        fp.write("\n")
         fp.write("="*len(project_name))
+        fp.write("\n")
         fp.write("")
+        fp.write("\n")
         fp.write("Introduction")
+        fp.write("\n")
         fp.write("------------")
+        fp.write("\n")
