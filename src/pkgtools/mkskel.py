@@ -2,7 +2,9 @@ import argparse
 import os
 import subprocess
 import shlex
+import shutil
 import logging
+import sys
 
 from pkgtools.mksetup import (make_setup,
                               make_manifest,
@@ -123,12 +125,27 @@ def main():  # prgama: nocover
                    default="0.0.0")
     p.add_argument("-install_packages",
                    help="packages to install in venv", nargs='*', default=None)
+    p.add_argument("-overwrite", help="will remove all files in the project path "
+                   "before creting the new one", default=False,
+                   action='store_true')
 
     dev_packages = ["ipython", "ipdb", "flake8", "autopep8", "pylint"]
 
     args = p.parse_args()
     args.project_path = args.project_path.format(
         project_name=args.project_name)
+    if os.path.exists(args.project_path):
+        if args.overwrite:
+            logger.info("found existing project files, now removing them")
+            import time
+            print("-----------------------------------------------")
+            print("sleeping for 5 seconds, pressk ctrl-c to cancel")
+            print("-----------------------------------------------")
+            time.sleep(5)
+            shutil.rmtree(args.project_path)
+        else:
+            logger.info("not overwriting exiting")
+            sys.exit(1)
     logger.info("creating project in {}".format(args.project_path))
     make_skel(args.project_name, args.project_path)
     # make_venv(args.project_name, args.install_packages)
