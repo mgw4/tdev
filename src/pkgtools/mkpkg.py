@@ -55,6 +55,7 @@ def make_package(package_name, base_path="./", version=None):
 def update_version(package_name, version, base_path="./", git_tag=False):
 
     pkg_list = package_name.split(".")
+    pkg_file = os.path.join(*pkg_list)
     init_file = os.path.join(base_path, *pkg_list, "__init__.py")
 
     if not os.path.isfile(init_file):
@@ -74,10 +75,10 @@ def update_version(package_name, version, base_path="./", git_tag=False):
 
     if git_tag:
         cmd = "git -C {base_path} add {init_file}".format(base_path=base_path,
-                                                          init_file=init_file)
+                                                          init_file=pkg_file)
         subprocess.check_output(shlex.split(cmd))
         cmd = ("git -C {base_path} commit "
-               "-m 'Bumps version to {version}'").format(
+               "-m 'Bumped version to {version}'").format(
             base_path=base_path,
             version=version
         )
@@ -95,7 +96,7 @@ def main_update():  # pragma: nocover
     p.add_argument("-base_path",
                    help="folder in which to create the package",
                    default="./")
-    p.add_argument("-git_tag", help="will tag the version in git",
+    p.add_argument("-no_git_tag", help="will not tag the version in git",
                    action='store_false', default=True)
     args = p.parse_args()
 
