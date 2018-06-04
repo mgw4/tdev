@@ -79,19 +79,6 @@ def make_pipenv(project_dir, python_version=None):
         os.chdir(tmp_dir)
 
 
-def make_venv(project_name, package_list=[]):  # pragma: nocover
-    assert isinstance(package_list, list)
-    default_packages = " -i ipython -i ipdb -i autopep8 -i flake8"
-    packages = default_packages + " -i ".join(package_list)
-    cmd = ("bash -c '. /usr/local/bin/virtualenvwrapper.sh ; "
-           "mkvirtualenv -p python3 {pkglist} {projname}'").format(
-        projname=project_name,
-        pkglist=packages)
-    logger.info("creating virtual env")
-    subprocess.check_output(shlex.split(cmd))
-    logger.info("successfully created virtual env")
-
-
 def make_skel(project_name, project_path):
     src_path = os.path.join(project_path, 'src')
 
@@ -108,6 +95,20 @@ def make_skel(project_name, project_path):
 
     make_readme(project_path, project_name)
     make_package(project_name, src_path)
+
+
+def launch_shell(project_path):
+    tmpdir = os.getcwd()
+    try:
+        env = os.environ.copy()
+        env.pop("VIRTUAL_ENV", None)  # disable the venv if present
+        cmd = "pipenv shell"
+        logger.info("launching shell")
+        subprocess.check_call(shlex.split(cmd))
+    except subprocess.CalledProcessError as ex:
+        raise Exception("Problem running %s from %s", cmd, os.getcwd()) from ex
+    finally:
+        os.chdir(tmpdir)
 
 
 def main():  # prgama: nocover
@@ -128,6 +129,9 @@ def main():  # prgama: nocover
     p.add_argument("-overwrite", help="will remove all files in the project path "
                    "before creting the new one", default=False,
                    action='store_true')
+    p.add_argument("-no_shell",
+                   help="will not launch the shell in the environement",
+                   default=False, action='store_true')
 
     dev_packages = ["ipython", "ipdb", "flake8", "autopep8", "pylint"]
 
@@ -143,12 +147,12 @@ def main():  # prgama: nocover
             print("-----------------------------------------------")
             time.sleep(5)
             shutil.rmtree(args.project_path)
+            logger.info("folder %s has been removed", args.project_path)
         else:
             logger.info("not overwriting exiting")
             sys.exit(1)
     logger.info("creating project in {}".format(args.project_path))
     make_skel(args.project_name, args.project_path)
-    # make_venv(args.project_name, args.install_packages)
     make_git(args.project_path)
     src_path = os.path.join(args.project_path, "src")
     update_version(args.project_name, args.version, src_path, True)
@@ -157,6 +161,10 @@ def main():  # prgama: nocover
 
     if args.install_packages is not None:
         pipenv_install(args.project_path, args.install_packages)
+
+    print(args.no_shell)
+    if args.no_shell:
+        launch_shell(args.project_path)
 
 
 if __name__ == "__main__":  # pragma: nocover
