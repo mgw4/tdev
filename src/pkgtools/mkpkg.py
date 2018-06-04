@@ -6,6 +6,7 @@ import shlex
 import subprocess
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def _mkpkg(pkgar, base_path="./", version=None):
@@ -76,6 +77,7 @@ def update_version(package_name, version, base_path="./", git_tag=False):
     if git_tag:
         cmd = "git -C {base_path} add {init_file}".format(base_path=base_path,
                                                           init_file=pkg_file)
+        logger.info("added file to repository")
         subprocess.check_output(shlex.split(cmd))
         cmd = ("git -C {base_path} commit "
                "-m 'Bumped version to {version}'").format(
@@ -83,9 +85,11 @@ def update_version(package_name, version, base_path="./", git_tag=False):
             version=version
         )
         subprocess.check_output(shlex.split(cmd))
+        logger.info("repository checked in")
         cmd = "git -C {base_path} tag {version}".format(base_path=base_path,
                                                         version=version)
         subprocess.check_output(shlex.split(cmd))
+        logger.info("repository tagged")
 
 
 def main_update():  # pragma: nocover
@@ -94,14 +98,14 @@ def main_update():  # pragma: nocover
     p.add_argument("version", help="version number for the package",
                    default=None)
     p.add_argument("-base_path",
-                   help="folder in which to create the package",
+                   help="folder in which to create the package is located",
                    default="./")
     p.add_argument("-no_git_tag", help="will not tag the version in git",
                    action='store_false', default=True)
     args = p.parse_args()
 
     update_version(args.package_name, args.version,
-                   args.base_path, args.git_tag)
+                   args.base_path, args.no_git_tag)
 
 
 def main():  # pragma: nocover
