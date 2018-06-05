@@ -5,8 +5,9 @@ import re
 import shlex
 import subprocess
 
+import pkgtools.logging
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
 def _mkpkg(pkgar, base_path="./", version=None):

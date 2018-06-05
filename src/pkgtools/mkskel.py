@@ -6,6 +6,8 @@ import shutil
 import logging
 import sys
 
+import pkgtools.logging
+
 from pkgtools.mksetup import (make_setup,
                               make_manifest,
                               make_readme,
@@ -13,9 +15,7 @@ from pkgtools.mksetup import (make_setup,
                               make_gitignore)
 from pkgtools.mkpkg import make_package, update_version
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 def make_git(project_path):  # pragma: nocover  check_call will fail

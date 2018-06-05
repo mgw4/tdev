@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 
+import pkgtools.logging
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,11 +40,11 @@ def make_requirements(project_path):
 def make_readme(project_path, project_name):
 
     with open(os.path.join(project_path, "README.rst"), "w") as fp:
-        fp.write("="*len(project_name))
+        fp.write("=" * len(project_name))
         fp.write("\n")
         fp.write(project_name)
         fp.write("\n")
-        fp.write("="*len(project_name))
+        fp.write("=" * len(project_name))
         fp.write("\n")
         fp.write("")
         fp.write("\n")
