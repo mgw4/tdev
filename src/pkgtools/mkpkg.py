@@ -49,7 +49,7 @@ def make_package(package_name, base_path="./", version=None):
     path_list = []
 
     for i in package_name.split("."):
-        if len(i) != 0:
+        if i:
             path_list.append(i)
             _mkpkg(path_list, base_path, version)
 
@@ -59,6 +59,16 @@ def update_version(package_name, version, base_path="./", git_tag=False):
     pkg_list = package_name.split(".")
     pkg_file = os.path.join(*pkg_list)
     init_file = os.path.join(base_path, *pkg_list, "__init__.py")
+
+    #  check to see it the tag is present
+    cmd = ("git -C {} rev-parse {}".format(base_path, version))
+
+    try:
+        subprocess.check_call(shlex.split(cmd))
+        logger.error("the git version {} already exists".format(version))
+        return
+    except subprocess.CalledProcessError:
+        pass
 
     if not os.path.isfile(init_file):
         raise Exception("{} is not a valid __init__.py file".format(init_file))
@@ -82,9 +92,8 @@ def update_version(package_name, version, base_path="./", git_tag=False):
         subprocess.check_output(shlex.split(cmd))
         cmd = ("git -C {base_path} commit "
                "-m 'Bumped version to {version}'").format(
-            base_path=base_path,
-            version=version
-        )
+                   base_path=base_path,
+                   version=version)
         subprocess.check_output(shlex.split(cmd))
         logger.info("repository checked in")
         cmd = "git -C {base_path} tag {version}".format(base_path=base_path,
