@@ -102,11 +102,18 @@ def update_version(package_name, version, base_path="./", git_tag=False):
         logger.info("repository tagged")
 
 
+def _version_type(string):
+    if not re.match(r"\d+\.\d+(\.\d+|)", string):
+        raise argparse.ArgumentTypeError("invalid format for version, "
+                                         "must be of format major.minor[.patch|]")
+    return string
+
+
 def main_update():  # pragma: nocover
     p = argparse.ArgumentParser()
     p.add_argument("package_name", help="package name ie: pkgtools.test")
     p.add_argument("version", help="version number for the package",
-                   default=None)
+                   default=None, type=_version_type)
     p.add_argument("-base_path",
                    help="folder in which to create the package is located",
                    default="./")
