@@ -56,7 +56,14 @@ def pipenv_install(project_dir, package_list, develop=False):
         os.chdir(tmp_dir)
 
 
-def make_pipenv(project_dir, python_version=None):
+def make_pipenv(project_dir, python_binary=None):
+    """make_pipenv
+
+    prepare the pipenv
+
+    :param project_dir: location to create the project
+    :param python_binary: binary to create the pipenv from
+    """
 
     assert os.path.isdir(project_dir), "the project directory must exist"
 
@@ -66,7 +73,7 @@ def make_pipenv(project_dir, python_version=None):
         os.chdir(project_dir)
         env = os.environ.copy()
         env.pop("VIRTUAL_ENV", None)  # disable the venv if present
-        flags = "--python {}".format(python_version) if python_version else ""
+        flags = "--python {}".format(python_binary) if python_version else ""
         cmd = "pipenv {flags} install".format(flags=flags)
         logger.info("creating pipenv")
         subprocess.check_call(shlex.split(cmd), env=env)
@@ -132,6 +139,9 @@ def main():  # prgama: nocover
     p.add_argument("-no_shell",
                    help="will not launch the shell in the environement",
                    default=False, action='store_true')
+    p.add_argument("-python_binary", 
+                   help="path to the python binary",
+                   default="/usr/local/bin/python3.6")
 
     dev_packages = ["ipython", "ipdb", "flake8", "autopep8", "pylint"]
 
@@ -156,7 +166,8 @@ def main():  # prgama: nocover
     make_git(args.project_path)
     src_path = os.path.join(args.project_path, "src")
     update_version(args.project_name, args.version, src_path, True)
-    make_pipenv(args.project_path)
+    make_pipenv(args.project_path,
+                python_binary=args.python_binary)
     pipenv_install(args.project_path, dev_packages, develop=True)
 
     if args.install_packages is not None:
